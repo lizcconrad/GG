@@ -1,0 +1,62 @@
+The Bitsy Bakery has three rooms:
+- The dining area
+- The Kitchen
+- The bathroom
+
+NORTH
+-------------------
+--------- | KITCHEN | EAST
+BATHROOM  | DINING  |
+--------------------
+SOUTH
+
+
+THE DINING AREA
+- 2 booths alongside the east wall
+    - on the wall for one booth is a painting of a cupcake with a red cherry on top
+    - on the other wall is a window
+    - napkin dispensers on each table
+- 2 pink parlor tables
+    - one seats 2 (white chairs)
+    - one seats 4 (two white chairs, two pink chairs)
+    - napkin dispensers
+- the floor is white tile
+- there is a serving counter
+    - register
+    - a tin tip jar
+    - menu holder with 3 menus
+    - display case
+        - 1 tray of 6 vanilla cupcakes with white frosting and red cherry
+        - 1 tray of 6 chocolate cupcake with chocolate frosting and rainbow sprinkles
+        - 1 plate of 12 chocolate chip cookies
+        - 1 plate of 12 sugar cookies
+        - 1 plate of 12 brownies
+- 1 door at the west to the bathroom
+- 1 door at the north to the kitchen
+
+
+THE KITCHEN
+- 1 large island with a stainless steel worktop
+- 2 ovens stacked
+- 1 large refrigerator/freezer
+- 1 large pantry with baking supplies
+- 3 countertops with baking tools
+    - 2 stand mixers
+    - piping tips and piping bags
+    - silicone spatulas
+- 1 sink
+- 1 dishwasher
+- 1 door to the south to the dining area
+
+
+THE BATHROOM
+- 1 toilet
+- 1 sink
+- 1 toilet paper dispenser
+- 1 soap dispenser
+- 1 paper towel dispenser
+- 1 mirror
+- 1 trashcan
+- 1 painting on the wall of a slice of strawberry cake
+- 1 door to the east to the dining area id
+

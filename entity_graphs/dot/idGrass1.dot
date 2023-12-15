@@ -1,0 +1,36 @@
+digraph  {
+idGrass1;
+tall;
+green;
+grass;
+"This grass is waving in the light wind";
+uncountable;
+idClearing1;
+idTheTrees1;
+idPlayer;
+idBranch1;
+idGlowingArea1;
+idGlowingGrass1;
+idCave1;
+idRockyArea1;
+idBottle1;
+idPebble1;
+idRockPile1;
+idGrass1 -> tall  [label=idGrass1_prop_idHeight];
+idGrass1 -> green  [label=idGrass1_prop_idColor];
+idGrass1 -> grass  [label=idGrass1_prop_idDisplayName];
+idGrass1 -> "This grass is waving in the light wind"  [label=idGrass1_prop_idExamineText];
+idGrass1 -> uncountable  [label=idGrass1_prop_idArticleType];
+idGrass1 -> idClearing1  [label=isNear];
+idGrass1 -> idTheTrees1  [label=isInsideOf];
+idGrass1 -> idPlayer  [label=isNear];
+idGrass1 -> idGrass1  [label=isNear];
+idGrass1 -> idBranch1  [label=isNear];
+idGrass1 -> idGlowingArea1  [label=isNorthOf];
+idGrass1 -> idGlowingGrass1  [label=isNorthOf];
+idGrass1 -> idCave1  [label=isSouthOf];
+idGrass1 -> idRockyArea1  [label=isEastOf];
+idGrass1 -> idBottle1  [label=isEastOf];
+idGrass1 -> idPebble1  [label=isEastOf];
+idGrass1 -> idRockPile1  [label=isEastOf];
+}

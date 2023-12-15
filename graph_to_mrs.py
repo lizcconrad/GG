@@ -1,0 +1,141 @@
+# CONVERTING GRAPH TO MRS
+import networkx as nx
+import json
+import re
+import random
+import composition_library
+import networkx as nx
+
+# graph selection ???
+# based on complexity??
+
+# dict of composition functions and their composition types
+# VALUES:
+#   PARENT_HOLE: parent (hole) -> hole (plug) ... photos --(of)--> cake
+#   PARENT_PLUG: parent (plug) -> child (hole) ... apple --(color)--> red
+#   EDGE_PRED_PARENT_CHILD: parent (ARG1) -> child (ARG2) + edge predicate ... cookie --(on)--> plate
+COMPOSITION_TYPES = json.load(open("comp_to_graph_relations.json"))
+
+
+# load lexicon
+def load_lexicon(lexicon_filename):
+    lexicon_file = open(lexicon_filename)
+    lexicon = json.load(lexicon_file)
+    return lexicon
+
+
+def guess_pos_and_create_ssement(pred_label, variables={}):
+    # noun
+    if re.match('_[a-zA-Z]+_n_[0-9]$', pred_label):
+        return composition_library.noun_ssement(pred_label, variables)
+    # adjective
+    elif re.match('_[a-zA-Z]+_a_[0-9]$', pred_label):
+        return composition_library.adjective_ssement(pred_label, variables)
+    # verb
+    elif re.match('_[a-zA-Z]+_v_[0-9]$', pred_label):
+        return composition_library.verb_ssement(pred_label, variables)
+    # quantifier
+    elif re.match('_[a-zA-Z]+_q$', pred_label):
+        return composition_library.quant_ssement(pred_label, variables)
+    # preposition
+    elif re.match('_[a-zA-Z]+_p(_loc)*$', pred_label):
+        return composition_library.preposition_ssement(pred_label, variables)
+    # if no guess, do basic_ssement, assuming ARG0 as INDEX
+    else:
+        return composition_library.basic(pred_label, variables)
+
+
+# parent MRS has a hole plugged by the child, edge introduces no predicate
+# ex. photos of cupcakes
+def parent_hole_composition(parent, child, edge_rule):
+    # get the composition rule from the lexicon via the edge name
+    comp_rule = getattr(composition_library, edge_rule)
+    # when the child is the plug, the parent is the functor, so it goes first
+    # e.g. adjective(adj, nom)
+    return comp_rule(parent, child)
+
+
+def parent_plug_composition(parent, child, edge_rule):
+    # get the composition rule from the lexicon via the edge name
+    comp_rule = getattr(composition_library, edge_rule)
+    # when the parent is the plug, the child is the functor, so it goes first
+    # e.g. adjective(adj, nom)
+    return comp_rule(child, parent)
+
+
+def edge_predicate(parent, child, edge_json):
+    # if an edge introduces a predicate, then the json info for the edge will look like this:
+    # {edge}: {
+    #   "composition": {...},
+    #   {predicate_type}: {...}
+    # so the edge_pred being introduced is whatever the value of that second property is
+    # and the composition rule is the value of the "composition" property
+    comp_rule_name = edge_json["composition"]
+    comp_rule = getattr(composition_library, comp_rule_name)
+    # edge pred information
+    edge_pred = edge_json["property_predicate"]["predicate_label"]
+    edge_ssement_type = edge_json["property_predicate"]["predicate_type"]
+    edge_ssement_rule = getattr(composition_library, edge_ssement_type)
+    edge_ssement = edge_ssement_rule(edge_pred)
+    return comp_rule(edge_ssement, parent, child)
+
+
+# get the MRS for an individual node
+def node_to_mrs(node, lexicon, variables={}):
+    # get ERG predicate
+    # might involve compounds or synonyms
+
+    # see if it's a node that's categorized as an entityType
+    try:
+        node_json = lexicon['entityTypes'][node]
+    except KeyError:
+        # see if it's a propertyValue
+        try:
+            node_json = lexicon['propertyValues'][node]
+        except KeyError:
+            raise KeyError("Can't find '{}' as a key in the lexicon".format(node))
+
+    # if it's just a string, return the ssement for the pred label
+    if isinstance(node_json, str):
+        return guess_pos_and_create_ssement(node_json, variables)
+    else:
+        if node_json['composition'] == 'compound':
+            head = guess_pos_and_create_ssement(node_json['predicates']['head'], variables)
+            nonhead = guess_pos_and_create_ssement(node_json['predicates']['modifier'])
+            return composition_library.compound(head, nonhead)
+        # TODO: this is here but it's not going to be used for GP2 because it's too hard to evaluate
+        # TODO: as in ... i need to get every possible synonym to express the variety for one node
+        # TODO: but as it stands now I return one (1) MRS per graph
+        elif node_json['composition'] == 'synonyms':
+            syn_choice = random.choice(node_json['predicates'])
+            return guess_pos_and_create_ssement(syn_choice, variables)
+
+
+def edge_to_mrs(parent, child, edge, lexicon):
+    edge_json = lexicon['properties'][edge]
+    # assume edge name in lexicon is direct composition type
+    # e.g. "idColor": "adjective"
+    # otherwise, get the "composition" value
+    if isinstance(edge_json, str):
+        edge_composition = edge_json
+    else:
+        edge_composition = lexicon['properties'][edge]['composition']
+
+    composition_type = COMPOSITION_TYPES[edge_composition]
+    if composition_type == 'PARENT_HOLE':
+        return parent_hole_composition(parent, child, edge_json)
+    elif composition_type == 'PARENT_PLUG':
+        return parent_plug_composition(parent, child, edge_json)
+    elif composition_type == 'EDGE_PRED_PARENT_CHILD':
+        return edge_predicate(parent, child, edge_json)
+
+
+# convert to MRS
+def graph_to_mrs(root, graph, lexicon):
+    print("teehee")
+
+    # 1. get MRS for root
+    # 2. for each edge,
+    # 3. get MRS for node
+    # 4. edge composition for parent and child
+

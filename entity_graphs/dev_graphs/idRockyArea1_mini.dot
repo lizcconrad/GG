@@ -1,0 +1,31 @@
+digraph  {
+idRockyArea1;
+idRockPile1;
+idPebble1;
+idCave1;
+
+
+grey;
+smooth;
+rocky;
+dark;
+
+idRockyArea1 -> rocky  [label=idRockyArea1_prop_idDescriptor];
+idRockyArea1 -> idRockPile1  [label=isNear];
+idRockyArea1 -> idPebble1  [label=isNear];
+idRockyArea1 -> idCave1  [label=isWestOf];
+
+
+idRockPile1 -> idPebble1  [label=isNear];
+
+idPebble1 -> grey  [label=idPebble1_prop_idColor];
+idPebble1 -> smooth  [label=idPebble1_prop_idDescriptor];
+idPebble1 -> idRockyArea1  [label=isNear];
+idPebble1 -> idRockPile1  [label=isNear];
+
+
+
+idCave1 -> dark  [label=idCave1_prop_idTint];
+idCave1 -> idRockyArea1  [label=isEastOf];
+
+}

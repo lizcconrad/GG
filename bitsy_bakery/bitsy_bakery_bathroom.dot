@@ -1,0 +1,64 @@
+digraph {
+idWall1;
+north;
+idWall1 -> north [label=isDirection];
+
+idWall2;
+east;
+idWall2 -> east [label=isDirection];
+
+idWall3;
+south;
+idWall3 -> south [label=isDirection];
+
+idWall4;
+west;
+idWall4 -> west [label=isDirection];
+
+idToilet1;
+white;
+idToilet1 -> white [label=idToilet1_prop_idColor];
+idToilet1 -> idWall1 [label=isTouching];
+idToilet1 -> idSink1 [label=isEastOf];
+
+idToiletPaperDispenser1;
+idToiletPaperDispenser1 -> idWall2 [label=isOn];
+
+idToiletPaper1;
+idToiletPaper1 -> idToiletPaperDispenser1 [label=isOn];
+
+
+idSink1;
+idSink1 -> idWall1 [label=isOn];
+idSink1 -> idToilet1 [label=isWestOf];
+idMirror1 -> idSink1 [label=isBelow];
+
+idMirror1;
+idMirror1 -> idWall1 [label=isOn];
+idMirror1 -> idSink1 [label=isAbove];
+
+idSoap1;
+lemon;
+idSoap1 -> idSoapDispenser1 [label=isInsideOf];
+idSoap1 -> lemon [label=idSoap1_prop_idScent];
+
+idSoapDispenser1;
+idSoapDispenser1 -> idWall1 [label=isOn];
+
+idTrashCan1;
+gray;
+idTrashCan1 -> gray [label=idTrashCan1_prop_idColor];
+idTrashCan1 -> idWall4 [label=isNextTo];
+
+idPainting1;
+idCake1
+strawberry
+idPainting1 -> idCake1 [label=isOf];
+idCake1 -> strawberry [label=idCake1_prop_idFlavor];
+idPainting1 -> idWall3 [label=isOn];
+
+idDoor1;
+idDoor1 -> idWall2 [label=isOn];
+
+
+}

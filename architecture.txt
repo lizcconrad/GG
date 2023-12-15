@@ -1,0 +1,35 @@
+STRUCTURE
+- mrs algebra rules -- mrs_algebra.py
+    - INPUT: pred_labels, SSEMENTS
+    - OUTPUT: SSEMENTS
+    - the functions that perform the semantic algebra operations, agnostic to the data being used, pure ERG/MRS type stuff
+
+- composition library -- composition_library.py
+    - INPUT: pred_labels, SSEMENTS
+    - OUTPUT: SSEMENTS
+    - "high level" functions that a user can use to perform the necessary composition. the names of these functions are referenced in the lexicon.json so the graph_to_mrs converter knows what type of composition to perform for different subgraphs
+
+- graph_to_mrs.py
+    - INPUT: graph
+    - OUTPUT: MRS
+    - Meat of this is the main recursive function
+    - But I guess it can have helper functions that handle the different “cases”
+    - So every node will call like “node_to_mrs(node_text)”
+    - And every edge will call like “edge_to_mrs(parent, child, edge_text)”
+    - and then I need something else that handles what each of those do
+    - I think within this file we can have …
+        - node
+        - parent_hole
+        - parent_plug
+        - edge_pred
+        - etc
+    - And all of these will use the node/edge text to Find the right composition rule and the right Direction of composition
+
+
+- comp_to_graph_relation.json
+    - INPUT: ???
+    - OUTPUT: what Kind of graphical relationship this composition appears in
+    - I’m having some interdependency issues because this file needs to know what the graph options are
+    - And the other file has those options and needs to use this file to get the Specifics for each rule
+    - I might just have to set a standard and claim that it’s gg idk …
+    - Honestly maybe this is just a json file

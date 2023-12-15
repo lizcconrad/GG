@@ -1,0 +1,21 @@
+strict digraph  {
+idPlayerRightHand;
+right;
+idPlayer;
+idGlowingArea1;
+idGlowingGrass1;
+idCave1;
+idRockyArea1;
+idBottle1;
+idPebble1;
+idRockPile1;
+idPlayerRightHand -> right  [label=idPlayerRightHand_prop_idLocation];
+idPlayerRightHand -> idPlayer  [label=isNear];
+idPlayerRightHand -> idGlowingArea1  [label=isNorthOf];
+idPlayerRightHand -> idGlowingGrass1  [label=isNorthOf];
+idPlayerRightHand -> idCave1  [label=isSouthOf];
+idPlayerRightHand -> idRockyArea1  [label=isEastOf];
+idPlayerRightHand -> idBottle1  [label=isEastOf];
+idPlayerRightHand -> idPebble1  [label=isEastOf];
+idPlayerRightHand -> idRockPile1  [label=isEastOf];
+}

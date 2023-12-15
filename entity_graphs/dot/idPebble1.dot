@@ -1,0 +1,38 @@
+digraph  {
+idPebble1;
+grey;
+pebble;
+smooth;
+"This pebble is smooth.";
+idRockyArea1;
+idTheTrees1;
+idRockPile1;
+idGlowingArea1;
+idGlowingGrass1;
+idCave1;
+idClearing1;
+idBranch1;
+idGrass1;
+idPlayer;
+idPlayerBackside;
+idPlayerLeftHand;
+idPlayerRightHand;
+idPebble1 -> grey  [label=idPebble1_prop_idColor];
+idPebble1 -> pebble  [label=idPebble1_prop_idDisplayName];
+idPebble1 -> smooth  [label=idPebble1_prop_idDescriptor];
+idPebble1 -> "This pebble is smooth."  [label=idPebble1_prop_idExamineText];
+idPebble1 -> idRockyArea1  [label=isNear];
+idPebble1 -> idTheTrees1  [label=isInsideOf];
+idPebble1 -> idRockPile1  [label=isNear];
+idPebble1 -> idPebble1  [label=isNear];
+idPebble1 -> idGlowingArea1  [label=isWestOf];
+idPebble1 -> idGlowingGrass1  [label=isWestOf];
+idPebble1 -> idCave1  [label=isWestOf];
+idPebble1 -> idClearing1  [label=isWestOf];
+idPebble1 -> idBranch1  [label=isWestOf];
+idPebble1 -> idGrass1  [label=isWestOf];
+idPebble1 -> idPlayer  [label=isWestOf];
+idPebble1 -> idPlayerBackside  [label=isWestOf];
+idPebble1 -> idPlayerLeftHand  [label=isWestOf];
+idPebble1 -> idPlayerRightHand  [label=isWestOf];
+}

@@ -1,0 +1,75 @@
+{
+  "entityTypes":
+    {
+      "idWall": "_wall_n_of",
+      "idToilet": "_toilet_n_1",
+      "idSink": "_sink_n_1",
+      "idMirror": "_mirror_n_1",
+      "idSoap": "_soap_n_1",
+      "idSoapDispenser" : {
+        "composition": "compound",
+        "predicates": [
+          "_soap_n_1",
+          "_dispenser/nn_u_unknown"
+        ]
+      },
+      "idTrashCan": {
+        "composition": "compound",
+        "predicates": {
+          "head": "_can_n_1",
+          "modifier": "_trash_n_1"
+
+        }
+      },
+      "idPainting": {
+        "composition": "synonyms",
+        "predicates": [
+          "_painting_n_of",
+          "_picture_n_of"
+        ]
+      },
+      "idCake": "_cake_n_1",
+      "idDoor": "_door_n_1"
+    },
+  "properties":
+  {
+    "isDirection": "compound",
+    "idColor": "adjective",
+    "isNorthOf": {
+      "composition": "relative_direction",
+      "direction": "_north_a_1"
+    },
+    "isSouthOf": {
+      "composition": "relative_direction",
+      "direction": "_south_a_1"
+    },
+    "isEastOf": {
+      "composition": "relative_direction",
+      "direction": "_east_a_1"
+    },
+    "isWestOf": {
+      "composition": "relative_direction",
+      "direction": "_west_a_1"
+    },
+    "isAbove": {
+      "composition": "preposition",
+      "preposition": "_above_p"
+    },
+    "isTouching": {
+      "composition": "preposition",
+      "preposition": "_next+to_p"
+    },
+    "isOn": {
+      "composition": "preposition",
+      "preposition": "_on_p_loc"
+    },
+    "isBelow": {
+      "composition": "preposition",
+      "preposition": "_below_p"
+    },
+    "isInsideOf": {
+      "composition": "preposition",
+      "preposition": "_inside+of_p"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "relationTypes": ["NODE", "PARENT_HOLE", "PARENT_PLUG", "EDGE_PRED_PARENT_CHILD"],
+  "basic": "NODE",
+  "noun_ssement": "NODE",
+  "adjective_ssement": "NODE",
+  "verb_ssement": "NODE",
+  "quant_ssement": "NODE",
+  "preposition_ssement": "NODE",
+  "compound": "NODE",
+  "quantify": "PARENT_PLUG",
+  "adjective": "PARENT_PLUG",
+  "preposition": "EDGE_PRED_PARENT_CHILD",
+  "relative_direction": "EDGE_PRED_PARENT_CHILD"
+}
