@@ -1,26 +1,12 @@
+# Contains examples of MRS composition using functions from the composition library
+# ORGANIZED: Y (01/04/2023)
+# DOCUMENTED: Y (01/04/2023)
 import mrs_algebra
 import composition_library
-from delphin import ace, mrs
-from delphin.codecs import simplemrs
+from mrs_util import wrap_and_generate
 
 
-# wrap with the 'unknown' predicate and generate
-def wrap_and_generate(final_ssement):
-    unknown = mrs_algebra.create_base_SSEMENT('unknown')
-    wrapped_ssement = mrs_algebra.op_final(unknown, final_ssement, mrs_algebra.VAR_LABELER.get_var_name('h'))
-    generate_from = mrs_algebra.overwrite_eqs(wrapped_ssement)
-
-    generate_mrs_string = simplemrs.encode(generate_from, indent=True)
-
-    with ace.ACEGenerator('../ERG/erg-2020.dat', ['-r', 'root_frag']) as generator:
-        print(generate_mrs_string)
-        response = generator.interact(generate_mrs_string)
-        print("GENERATED RESULTS ... ")
-        for r in response.results():
-            print(r.get('surface'))
-
-
-# "the red apple"
+# "a red apple"
 def adjective_example():
     print("-- ADJECTIVE -- ")
     apple = composition_library.noun_ssement('_apple_n_1')
@@ -69,7 +55,7 @@ def compound_example_one_node():
 
 
 # "the north room"
-# TODO: have to fix the fact that it gets the wrong _wall_n_of synopsis
+# TODO: have to fix the fact that it gets the wrong _wall_n_of synopsis, using _room_n_unit for now in its place
 def compound_example_two_nodes():
     print("--- RELATIONAL COMPOUND ---")
 
@@ -86,7 +72,7 @@ def compound_example_two_nodes():
 
 # "the mirror above the sink"
 def above_example():
-    print("-- ABOVE -- ")
+    print("-- ABOVE --")
     non_head_ssement = composition_library.noun_ssement('_sink_n_1')
     the_1 = composition_library.quant_ssement('_the_q')
     non_head_quant = composition_library.quantify(the_1, non_head_ssement)
@@ -106,7 +92,7 @@ def above_example():
 
 # "the bottle next to the bowl"
 def next_to_example():
-    print("-- NEXT TO -- ")
+    print("-- NEXT TO --")
     non_head_ssement = composition_library.noun_ssement('_bowl_n_1')
     the_1 = composition_library.quant_ssement('_the_q')
     non_head_quant = composition_library.quantify(the_1, non_head_ssement)
@@ -125,29 +111,29 @@ def next_to_example():
 
 
 # "the lemon scented soap"
-def past_participle_example():
+# TODO: ... this works but it's bizarre, possibly because of the MRS structure I chose to model after
+def propertied_example():
     print("-- PAST PARTICIPLE --")
 
     the = composition_library.quant_ssement('_the_q')
-    lemon = composition_library.noun_ssement('_lemon_a_1')
-    scented = composition_library.verb_ssement('_scent_v_1')
-    udef_q = composition_library.quant_ssement('udef_q')
+    lemon = composition_library.adjective_ssement('_lemon_a_1')
+    scented = composition_library.verb_ssement('_scent_v_1', {}, 'ARG2')
     soap = composition_library.noun_ssement('_soap_n_1')
 
-    udef_soap = composition_library.quantify(udef_q, soap)
-    scented_arg2 = mrs_algebra.op_non_scopal_lbl_unshared(scented, udef_soap, 'ARG2')
-    scented_arg1 = mrs_algebra.op_non_scopal_lbl_unshared(scented_arg2, lemon, 'ARG1')
-    quant_secnted = composition_library.quantify(the, scented_arg1)
+    lemon_soap = composition_library.adjective(lemon, soap)
+    lemon_scented_soap = mrs_algebra.op_non_scopal_lbl_shared(scented, lemon_soap, 'ARG2')
+    the_lemon_scented_soap = composition_library.quantify(the, lemon_scented_soap)
 
-    wrap_and_generate(quant_secnted)
+    wrap_and_generate(the_lemon_scented_soap)
 
 
 def main():
     example_functions = [compound_example_one_node, compound_example_two_nodes, relative_direction_example,
-                         above_example, adjective_example, next_to_example]
+                         above_example, adjective_example, next_to_example, propertied_example]
     for ex in example_functions:
         ex()
         print("\n\n")
+
 
 if __name__ == "__main__":
     main()

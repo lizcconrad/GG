@@ -1,4 +1,8 @@
-# taken from the _mrs.py file to test my subclas
+# Contains the MRS algebra
+# ORGANIZED: Y (01/04/2023)
+# DOCUMENTED: Y (01/04/2023)
+
+# taken from the _mrs.py file to test my subclass
 from typing import Optional, Iterable, Mapping, Dict
 from delphin.lnk import Lnk
 from delphin import variable
@@ -7,8 +11,7 @@ from delphin import scope
 # end from _mrs.py
 
 import config
-from delphin import ace, mrs, semi
-from delphin.codecs import simplemrs
+from delphin import mrs, semi
 
 
 class VarIterator:
@@ -72,7 +75,8 @@ class SSEMENT(mrs.MRS):
         ... R is a bag of EPs (see the EP class for details)
         ... C is a bag of handle constraints
 
-    However, a SSEMENT has additional information, namely the holes. It is a tuple of the form <Hook, Holes, Lzt, Eqs, Hcons> where ...
+    However, a SSEMENT has additional information, namely the holes.
+    It is a tuple of the form <Hook, Holes, Lzt, Eqs, Hcons> where ...
         ... Hook is a tuple of the form <GT, Ind, Xarg> (same as above)
         ... Holes is the list of holes
         ... Lzt is the list of SEPs (analogous to R in an MRS)
@@ -80,9 +84,15 @@ class SSEMENT(mrs.MRS):
         ... Hcons is a bag of handle constraints
     Basically, the only thing SSEMENT has that MRS does not is Holes, so I'm creating an object that uses
     the PyDelphin MRS object and points to pieces of it, but also has Holes
+
+    One other small addition is the LTOP, which PyDelphin does not have,
+    seemingly because PyDelphin is primarily concerned with fully composed/complete MRSes,
+    where the TOP is basically an "unrelated" handle that is QEQ to the LBL of the EP where ARG0=top level INDEX.
+    However, during composition, the LTOP (or local top) is more appropriate
     """
 
-    # TODO: hcons and icons are of type mrs.HCons and mrs.ICons ... should just be HCons but this isn't in the real file yet
+    # TODO: hcons and icons are of type mrs.HCons and mrs.ICons ...
+    #  should just be HCons but this isn't in the real file yet
     def __init__(self,
                  top: Optional[str] = None,
                  ltop: Optional[str] = None,
@@ -111,40 +121,12 @@ class SSEMENT(mrs.MRS):
 SEMI = semi.load(config.SEMI)
 VAR_LABELER = VarLabeler()
 
-# need a way to specify which argument gets chosen as the INDEX . . .
-SEMANTIC_TYPES = {
 
-}
-
-
-def group_equalities(eqs):
-    """
-    Group equalities from a list of EQs into lists as opposed to individual equalities
-    That is, if x1=x2 and x2=x3 create a list [x1, x2, x3] such that they're in an equality "group"
-    :param eqs: List of eqs
-    :type eqs: list
-    :return: new_sets, list of EQ groups
-    :rtype: list
-    """
-    new_sets = []
-    # as long as there are eqs still not covered
-    while eqs:
-        # pop one eq off the list
-        current_eq = eqs.pop()
-        # flag for whether a new group is needed
-        need_new = True
-        # for every set in the list of new_sets,
-        for i, new_set in enumerate(new_sets):
-            # if either member is in the new_set, update the set so that it's the union of both
-            if current_eq[0] in new_set or current_eq[1] in new_set:
-                new_sets[i] = new_set.union(set(current_eq))
-                # and therefore we don't need to create a new set because we found the right group
-                need_new = False
-        # we didn't find a match, so start a new group
-        if need_new:
-            new_sets.append(set(current_eq))
-
-    return new_sets
+def reset_labeler():
+    # TODO: not sure when to use this ...
+    #  but it feels like I should at some point especially after generating tons of MRSes
+    global VAR_LABELER
+    VAR_LABELER = VarLabeler()
 
 
 def get_holes(sep):
@@ -186,27 +168,6 @@ def concretize(var_labeler, synopsis):
         args_dict[role['name']] = var_labeler.get_var_name(role['value'])
 
     return args_dict
-
-
-def get_most_specified_variable(eq_vars):
-    # this isn't going to check for incompatibilities, I'm assuming those have been handled already
-    types = {
-        'u': 0,
-        'i': 1,
-        'p': 1,
-        'e': 2,
-        'x': 2,
-        'h': 2
-    }
-
-    most_spec_var = eq_vars[0]
-    for var in eq_vars:
-        # type is the first char in the string
-        # if the type of the current var is more specific than the already chosen one,
-        # update the chosen one
-        if types[var[0]] > types[most_spec_var[0]]:
-            most_spec_var = var
-    return most_spec_var
 
 
 def create_base_SSEMENT(predicate, variables={}, index_arg='ARG0'):
@@ -262,7 +223,7 @@ def op_non_scopal_lbl_shared(functor, argument, hole_label):
     # seps = FUNC.seps + ARG.seps
     # eqs = tr_closure(FUNC.eqs, ARG.eqs) + eq(ARG.hook, HOLE) + eq(FUNC.ltop, ARG.ltop)
     # ... new EQ between the ARG.hook and the hole being filled, also a new EQ between the FUNC and ARG lbls
-    # qeqs = FUNC.qeqs + ARG.qeqs + FUNC.holes[RSTR]=qARG.ltop
+    # qeqs = FUNC.qeqs + ARG.qeqs
 
     # Variables are not included in the algebra,
     # but I need the ability to specific syntactic properties on certain variables
@@ -418,6 +379,7 @@ def op_scopal(scoping, scoped):
     argument = scoped
 
     # ARG0 of a quantifier should be identified with INDEX of scoped_ssement
+    # TODO: apparently I need to actually ask for the hole_label
     hole_label = 'ARG0'
 
     # hook ... top & index
@@ -539,95 +501,3 @@ def op_final(wrapper_ssement, full_ssement, final_top_label):
     return SSEMENT(new_top, new_ltop, new_index, new_seps, new_variables, new_holes, new_eqs, new_qeqs)
 
 
-def overwrite_eqs(final_ssement):
-    """
-    Create a new SSEMENT where the EQs have been overwritten to one representative value
-    :param final_ssement: final SSEMENT from composition
-    :type final_ssement: SSEMENT
-    :return: new SSEMENT with overwritten EQs
-    :rtype: SSEMENT
-    """
-
-    # will be progressively collecting a new list of SEPs, HCONS, and EQs, so start with those from the final_ssement
-    # where final_ssement is the SSEMENT that comes out after composition is complete
-    current_ssement = final_ssement
-    current_seps = current_ssement.rels
-    current_variables = current_ssement.variables
-    current_hcons = current_ssement.hcons
-    # group the equalities so if x1=x2 and x2=x3 there's a list of [x1, x2, x3] with all variables that are equivalent
-    grouped_eqs = group_equalities(current_ssement.eqs)
-
-    for eq in grouped_eqs:
-        # need to get the more specific variable of the pair
-        chosen_var = get_most_specified_variable(list(eq))
-
-        # check the top
-        if current_ssement.top in eq:
-            newest_top = chosen_var
-        else:
-            newest_top = current_ssement.top
-        # check the ltop
-        if current_ssement.ltop in eq:
-            newest_ltop = chosen_var
-        else:
-            newest_ltop = current_ssement.ltop
-        # check the index
-        if current_ssement.index in eq:
-            newest_index = chosen_var
-        else:
-            newest_index = current_ssement.index
-
-        # check the rels
-        new_seps = []
-        for r in current_seps:
-            if r.label in eq:
-                new_r_label = chosen_var
-            else:
-                new_r_label = r.label
-            new_r_args = {}
-            for arg in r.args:
-                if r.args[arg] in eq:
-                    new_r_args[arg] = chosen_var
-                else:
-                    new_r_args[arg] = r.args[arg]
-            new_seps.append(SEP(r.predicate, new_r_label, new_r_args))
-
-
-        # update the SEP list with the current ones
-        current_seps = new_seps
-
-        # update the variable dictionary
-        new_variables = {}
-        for var in current_variables:
-            if var in eq:
-                new_variables[chosen_var] = {}
-                # update the new property dictionary with properties from every var in the eq group
-                for e in eq:
-                    new_variables[chosen_var].update(current_variables[e])
-            else:
-                new_variables[var] = current_variables[var]
-        current_variables = new_variables
-
-        # check the hcons...
-        new_hcons = []
-        for hcon in current_hcons:
-            # is there any chance that the hi of an hcon will be one member of an eq
-            # and the lo could be another member of the eq? so both need to be checked/changed?
-            # idk but i'm scared so
-            if hcon.hi in eq:
-                new_hi = chosen_var
-            else:
-                new_hi = hcon.hi
-            if hcon.lo in eq:
-                new_lo = chosen_var
-            else:
-                new_lo = hcon.lo
-            new_hcons.append(mrs.HCons(new_hi, 'qeq', new_lo))
-
-        current_hcons = new_hcons
-
-        # check the icons...???
-
-    # build new overwritten SSEMENT
-    # eqs list is gone
-    return SSEMENT(newest_top, newest_ltop, newest_index, current_seps, current_variables, current_ssement.holes, None, new_hcons)
